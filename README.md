@@ -69,4 +69,4 @@ Found 1 solution in total
 
 ```
 
-I promise to make it easily read your sudoku boars easily :).
+I promise to make it read your sudoku boars easily :).
