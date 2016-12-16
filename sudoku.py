@@ -13,7 +13,7 @@ def get_valid_moves(sudoku, x, y, stoh=0):
     if sudoku[i][x] > 0:
       used_digits.add(sudoku[i][x])
     if sudoku[y][i] > 0:
-      used_digits.add(sudoku[i][x])
+      used_digits.add(sudoku[y][i])
   
   # check by quadrant
   qx = x//3
