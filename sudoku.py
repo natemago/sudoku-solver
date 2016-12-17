@@ -45,7 +45,13 @@ def next_unsolved_pos(sudoku):
           if sudoku[qy*3+y][qx*3+x] == 0:
             return (qx*3 + x,qy*3 + y)
   return None
-  
+
+def all_unsolved_pos(sudoku):
+  for y in range(0, 9):
+    for x in range(0,9):
+      if sudoku[y][x] == 0:
+        yield (x,y)
+      
   
 def is_solved(sudoku):
   return sum([sum(row) for row in sudoku]) == 405
@@ -122,7 +128,7 @@ def solve(sudoku, find_all=False, par=4, stoh=0, siter=1000):
           if not find_all:
             stats['solved'] = True
             break
-        
+          continue
         if stats['count'] % 100 == 0:
           stats['state'] = move.board
         
@@ -165,7 +171,32 @@ def solve(sudoku, find_all=False, par=4, stoh=0, siter=1000):
   
   
   return stats['solutions']
-  
+
+
+def solve_dfs(sudoku):
+  SudokuMove = namedtuple('SudokuMove', ['x', 'y', 'v', 'board'])
+  q = []
+  solutions_count = 0
+  for x,y in all_unsolved_pos(sudoku):
+    print ((x,y))
+    for v in get_valid_moves(sudoku, x, y):
+      q.append(SudokuMove(x=x, y=y, v=v, board=clone_with_move(sudoku, x, y, v)))
+
+    while len(q):
+      move = q.pop()
+      if is_solved(move.board):
+        solutions_count += 1
+        print('Solution (%d):' % solutions_count)
+        print(as_str(move.board))
+        continue
+      sx,sy = next_unsolved_pos(move.board)
+      V = get_valid_moves(move.board, sx, sy)
+      for v in V:
+        q.append(SudokuMove(x=sx, y=sy,v=v, board=clone_with_move(move.board, sx, sy, v)))
+
+  print('There are %d solution for this sudoku in total.' % solutions_count)
+
+
 
 
 sudoku = [
@@ -182,6 +213,12 @@ sudoku = [
 
 
 import sys
+
+
+if 'dfs' in sys.argv:
+  solve_dfs(sudoku)
+  sys.exit(0)
+
 
 if 'gen' in sys.argv:
   sudoku = [[0 for j in range(0,9)] for i in range(0, 9)]
